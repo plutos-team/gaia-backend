@@ -15,16 +15,20 @@ environment_id = 'fca8abb5-36d4-463f-b258-735436b8cba7'
 collection_id = 'b192ab08-51d9-4ed0-9f4c-3002ad80493e'
 
 
-@application.route('/search', methods=['POST'])
+@application.route('/search', methods=['POST', 'GET'])
 def search():
-    data = request.get_json(force=True)
-    q = data['q']
-    context = data['context'] if 'context' in data else {}
+    if request.method == 'POST':
+        data = request.get_json(force=True)
+        q = data['q']
+        context = data['context'] if 'context' in data else {}
+    else:
+        q = 'farming'
+        context = {}
     results = discovery.query(environment_id,
                               collection_id,
                               {'natural_language_query': q})
     return jsonify({
         'results': results['results'],
-        'suggestions': ['farming', 'atmosphere', 'canada'],
+        'suggestions': ['Atmosphere', 'Land Surface', 'Solid Earth'],
         'new_context': {}
     })
